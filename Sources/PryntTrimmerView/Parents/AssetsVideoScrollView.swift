@@ -130,7 +130,7 @@ class AssetsVideoScrollView: UIScrollView {
       let lastView = contentView.subviews.last?.frame.maxX ?? CGFloat(index) * size.width
       thumbnailView.frame.origin = CGPoint(x: lastView, y: 0)
       thumbnailView.tag = index
-      print("addThumbnailViews \(index): \(thumbnailView.frame.debugDescription)")
+      //print("addThumbnailViews \(index): \(thumbnailView.frame.debugDescription)")
       contentView.addSubview(thumbnailView)
     }
   }
