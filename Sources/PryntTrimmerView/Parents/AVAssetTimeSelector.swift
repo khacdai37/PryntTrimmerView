@@ -12,87 +12,107 @@ import AVFoundation
 /// A generic class to display an asset into a scroll view with thumbnail images, and make the equivalence between a time in
 // the asset and a position in the scroll view
 public class AVAssetTimeSelector: UIView, UIScrollViewDelegate {
-
-    let assetPreview = AssetVideoScrollView()
-
-    /// The maximum duration allowed for the trimming. Change it before setting the asset, as the asset preview
-    public var maxDuration: Double = 15 {
-        didSet {
-            assetPreview.maxDuration = maxDuration
-        }
+  
+  let assetPreview = AssetsVideoScrollView()
+  
+  /// The maximum duration allowed for the trimming. Change it before setting the asset, as the asset preview
+  public var maxDuration: Double = 15 {
+    didSet {
+      assetPreview.maxDuration = maxDuration
     }
-
-    /// The asset to be displayed in the underlying scroll view. Setting a new asset will automatically refresh the thumbnails.
-    public var asset: AVAsset? {
-        didSet {
-            assetDidChange(newAsset: asset)
-        }
+  }
+  
+  public var selectedDuration: Double = 15 {
+    didSet {
+      assetPreview.selectedDuration = selectedDuration
     }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupSubviews()
+  }
+  
+  public var assets: [AVAsset]? {
+    didSet {
+      assetDidChange(newAssets: assets)
     }
-
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setupSubviews()
+  }
+  
+  override init(frame: CGRect) {
+    super.init(frame: frame)
+    setupSubviews()
+  }
+  
+  required public init?(coder aDecoder: NSCoder) {
+    super.init(coder: aDecoder)
+    setupSubviews()
+  }
+  
+  func setupSubviews() {
+    setupAssetPreview()
+    constrainAssetPreview()
+  }
+  
+  public func regenerateThumbnails() {
+    if let assets = assets {
+      assetPreview.regenerateThumbnails(for: assets)
     }
-
-    func setupSubviews() {
-        setupAssetPreview()
-        constrainAssetPreview()
+  }
+  
+  // MARK: - Asset Preview
+  
+  func setupAssetPreview() {
+    self.translatesAutoresizingMaskIntoConstraints = false
+    assetPreview.translatesAutoresizingMaskIntoConstraints = false
+    assetPreview.delegate = self
+    addSubview(assetPreview)
+  }
+  
+  func constrainAssetPreview() {
+    assetPreview.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+    assetPreview.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+    assetPreview.topAnchor.constraint(equalTo: topAnchor).isActive = true
+    assetPreview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+  }
+  
+  func assetDidChange(newAssets: [AVAsset]?) {
+    if let assets = newAssets {
+      assetPreview.regenerateThumbnails(for: assets)
     }
-
-    public func regenerateThumbnails() {
-        if let asset = asset {
-            assetPreview.regenerateThumbnails(for: asset)
-        }
+  }
+  
+  // MARK: - Time & Position Equivalence
+  
+  var durationSize: CGFloat {
+    return assetPreview.contentSize.width
+  }
+  
+  func getTime(from position: CGFloat) -> CMTime? {
+    guard let assets = assets, let timescale = assets.first?.duration.timescale  else {
+      return nil
     }
-
-    // MARK: - Asset Preview
-
-    func setupAssetPreview() {
-        self.translatesAutoresizingMaskIntoConstraints = false
-        assetPreview.translatesAutoresizingMaskIntoConstraints = false
-        assetPreview.delegate = self
-        addSubview(assetPreview)
+    let durations = assets.reduce(0) { partialResult, asset in
+      partialResult + Double(asset.duration.value)
     }
-
-    func constrainAssetPreview() {
-        assetPreview.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        assetPreview.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        assetPreview.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        assetPreview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+    let normalizedRatio = max(min(1, position / durationSize), 0)
+    let positionTimeValue = Double(normalizedRatio) * durations
+    return CMTime(value: Int64(positionTimeValue), timescale: timescale)
+  }
+  
+  func getPosition(from time: CMTime) -> CGFloat? {
+    guard let assets = assets, let timescale = assets.first?.duration.timescale  else {
+      return nil
     }
-
-    func assetDidChange(newAsset: AVAsset?) {
-        if let asset = newAsset {
-            assetPreview.regenerateThumbnails(for: asset)
-        }
+    let durations = assets.reduce(0) { partialResult, asset in
+      partialResult + Double(asset.duration.value)
     }
-
-    // MARK: - Time & Position Equivalence
-
-    var durationSize: CGFloat {
-        return assetPreview.contentSize.width
+    let timeRatio = CGFloat(time.value) * CGFloat(timescale) /
+    (CGFloat(time.timescale) * CGFloat(durations))
+    return timeRatio * durationSize
+  }
+  
+  public func scrollToTime(_ second: Double) {
+    guard let asset = assets?.first else {
+      return
     }
-
-    func getTime(from position: CGFloat) -> CMTime? {
-        guard let asset = asset else {
-            return nil
-        }
-        let normalizedRatio = max(min(1, position / durationSize), 0)
-        let positionTimeValue = Double(normalizedRatio) * Double(asset.duration.value)
-        return CMTime(value: Int64(positionTimeValue), timescale: asset.duration.timescale)
-    }
-
-    func getPosition(from time: CMTime) -> CGFloat? {
-        guard let asset = asset else {
-            return nil
-        }
-        let timeRatio = CGFloat(time.value) * CGFloat(asset.duration.timescale) /
-            (CGFloat(time.timescale) * CGFloat(asset.duration.value))
-        return timeRatio * durationSize
-    }
+    let time = CMTime(seconds: second, preferredTimescale: asset.duration.timescale)
+    let positionX = getPosition(from: time) ?? 0
+    assetPreview.setContentOffset(CGPoint(x: positionX, y: 0), animated: false)
+  }
 }

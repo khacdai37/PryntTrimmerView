@@ -29,7 +29,6 @@ class VideoCropperViewController: AssetSelectionViewController {
     }
 
     override func loadAsset(_ asset: AVAsset) {
-        selectThumbView.asset = asset
         selectThumbView.delegate = self
         videoCropView.asset = asset
     }

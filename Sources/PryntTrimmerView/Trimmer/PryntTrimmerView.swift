@@ -11,7 +11,10 @@ import UIKit
 
 public protocol TrimmerViewDelegate: AnyObject {
     func didChangePositionBar(_ playerTime: CMTime)
-    func positionBarStoppedMoving(_ playerTime: CMTime)
+    
+  func positionBarStoppedMoving(_ playerTime: CMTime)
+  
+  func positionBarStoppedDrag(_ playerTime: CMTime)
 }
 
 /// A view to select a specific time range of a video. It consists of an asset preview with thumbnails inside a scroll view, two
@@ -234,7 +237,7 @@ public protocol TrimmerViewDelegate: AnyObject {
             } else {
                 currentRightConstraint = rightConstraint!.constant
             }
-            updateSelectedTime(stoppedMoving: false)
+            updateSelectedTime(endDrag: false)
         case .changed:
             let translation = gestureRecognizer.translation(in: superView)
             if isLeftGesture {
@@ -248,10 +251,10 @@ public protocol TrimmerViewDelegate: AnyObject {
             } else if let endTime = endTime {
                 seek(to: endTime)
             }
-            updateSelectedTime(stoppedMoving: false)
+            updateSelectedTime(endDrag: false)
 
         case .cancelled, .ended, .failed:
-            updateSelectedTime(stoppedMoving: true)
+            updateSelectedTime(endDrag: true)
         default: break
         }
     }
@@ -270,12 +273,15 @@ public protocol TrimmerViewDelegate: AnyObject {
 
     // MARK: - Asset loading
 
-    override func assetDidChange(newAsset: AVAsset?) {
-        super.assetDidChange(newAsset: newAsset)
-        resetHandleViewPosition()
+    func assetDidChange(newAsset: AVAsset?) {
     }
+  
+  override func assetDidChange(newAssets: [AVAsset]?) {
+    super.assetDidChange(newAssets: newAssets)
+    resetHandleViewPosition()
+  }
 
-    private func resetHandleViewPosition() {
+    public func resetHandleViewPosition() {
         leftConstraint?.constant = 0
         rightConstraint?.constant = 0
         layoutIfNeeded()
@@ -307,7 +313,18 @@ public protocol TrimmerViewDelegate: AnyObject {
         let endPosition = rightHandleView.frame.origin.x + assetPreview.contentOffset.x - handleWidth
         return getTime(from: endPosition)
     }
-
+  
+  private func updateSelectedTime(endDrag: Bool) {
+      guard let playerTime = positionBarTime else {
+          return
+      }
+      if endDrag {
+          delegate?.positionBarStoppedDrag(playerTime)
+      } else {
+          delegate?.didChangePositionBar(playerTime)
+      }
+  }
+  
     private func updateSelectedTime(stoppedMoving: Bool) {
         guard let playerTime = positionBarTime else {
             return
@@ -325,8 +342,13 @@ public protocol TrimmerViewDelegate: AnyObject {
     }
 
     private var minimumDistanceBetweenHandle: CGFloat {
-        guard let asset = asset else { return 0 }
-        return CGFloat(minDuration) * assetPreview.contentView.frame.width / CGFloat(asset.duration.seconds)
+      guard let assets = assets else {
+        return 0
+      }
+      let durations = assets.reduce(0) { partialResult, asset in
+        partialResult + asset.duration.seconds
+      }
+      return CGFloat(minDuration) * assetPreview.contentView.frame.width / CGFloat(durations)
     }
 
     // MARK: - Scroll View Delegate

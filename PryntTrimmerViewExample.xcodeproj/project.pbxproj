@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		21F204362807D5C5004671CF /* video1.MOV in Resources */ = {isa = PBXBuildFile; fileRef = 21F204342807D5C5004671CF /* video1.MOV */; };
+		21F204372807D5C5004671CF /* portraitVideo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 21F204352807D5C5004671CF /* portraitVideo.mp4 */; };
+		21F374AC2806D16700368CE4 /* AssetsVideoScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F374AB2806D16700368CE4 /* AssetsVideoScrollView.swift */; };
 		AB29084D24BE0D4500A55A86 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB29084C24BE0D4500A55A86 /* AppDelegate.swift */; };
 		AB29085424BE0D4500A55A86 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB29085224BE0D4500A55A86 /* Main.storyboard */; };
 		AB29085624BE0D4500A55A86 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB29085524BE0D4500A55A86 /* Assets.xcassets */; };
@@ -28,6 +31,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		21F204342807D5C5004671CF /* video1.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = video1.MOV; sourceTree = "<group>"; };
+		21F204352807D5C5004671CF /* portraitVideo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = portraitVideo.mp4; sourceTree = "<group>"; };
+		21F374AB2806D16700368CE4 /* AssetsVideoScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsVideoScrollView.swift; sourceTree = "<group>"; };
 		AB29084924BE0D4500A55A86 /* PryntTrimmerViewExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PryntTrimmerViewExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB29084C24BE0D4500A55A86 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AB29085324BE0D4500A55A86 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -102,6 +108,8 @@
 				AB29085524BE0D4500A55A86 /* Assets.xcassets */,
 				AB29085724BE0D4500A55A86 /* LaunchScreen.storyboard */,
 				AB29085A24BE0D4500A55A86 /* Info.plist */,
+				21F204352807D5C5004671CF /* portraitVideo.mp4 */,
+				21F204342807D5C5004671CF /* video1.MOV */,
 			);
 			path = PryntTrimmerViewExample;
 			sourceTree = "<group>";
@@ -139,6 +147,7 @@
 			children = (
 				AB4C681624BE24E000518B1A /* AssetVideoScrollView.swift */,
 				AB4C681724BE24E000518B1A /* AVAssetTimeSelector.swift */,
+				21F374AB2806D16700368CE4 /* AssetsVideoScrollView.swift */,
 			);
 			path = Parents;
 			sourceTree = "<group>";
@@ -264,6 +273,8 @@
 			files = (
 				AB29085924BE0D4500A55A86 /* LaunchScreen.storyboard in Resources */,
 				AB29085624BE0D4500A55A86 /* Assets.xcassets in Resources */,
+				21F204362807D5C5004671CF /* video1.MOV in Resources */,
+				21F204372807D5C5004671CF /* portraitVideo.mp4 in Resources */,
 				AB29085424BE0D4500A55A86 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -302,6 +313,7 @@
 				AB4C682424BE24E000518B1A /* VideoScrollView.swift in Sources */,
 				AB4C682624BE24E000518B1A /* HandlerView.swift in Sources */,
 				AB4C682124BE24E000518B1A /* AVAssetTimeSelector.swift in Sources */,
+				21F374AC2806D16700368CE4 /* AssetsVideoScrollView.swift in Sources */,
 				AB4C682224BE24E000518B1A /* ThumbSelectorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -447,7 +459,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GXH324789Z;
+				DEVELOPMENT_TEAM = Y8J5DMAZSX;
 				INFOPLIST_FILE = PryntTrimmerViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -465,7 +477,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GXH324789Z;
+				DEVELOPMENT_TEAM = Y8J5DMAZSX;
 				INFOPLIST_FILE = PryntTrimmerViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
