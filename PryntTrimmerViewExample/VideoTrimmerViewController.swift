@@ -34,11 +34,19 @@ class VideoTrimmerViewController: AssetSelectionViewController {
 //    loadAssetRandomly()
     let url1 = Bundle.main.url(forResource: "portraitVideo", withExtension: "mp4")!
     let url2 = Bundle.main.url(forResource: "video1", withExtension: "MOV")!
-    let assets = [AVAsset(url: url1)]
+    let assets = [AVAsset(url: url1), AVAsset(url: url2)]
                   
+    trimmerView.maxDuration = assets.reduce(0, { partialResult, asset in
+      partialResult + asset.duration.seconds
+    })
+    
+    trimmerView.selectedDuration = trimmerView.maxDuration
+    
     trimmerView.assets = assets
     trimmerView.delegate = self
     addVideoPlayer(with: assets, playerView: playerView)
+    
+    print("loadAsset: \(trimmerView.endTime!.seconds) - \(trimmerView.startTime!.seconds)")
   }
   
   @IBAction func play(_ sender: Any) {
@@ -61,7 +69,7 @@ class VideoTrimmerViewController: AssetSelectionViewController {
 //    addVideoPlayer(with: asset, playerView: playerView)
     
 //    trimmerView.selectedDuration = 4
-    trimmerView.regenerateThumbnails()
+//    trimmerView.regenerateThumbnails()
 //    trimmerView.scrollToTime(8)
     
   }
@@ -129,10 +137,10 @@ class VideoTrimmerViewController: AssetSelectionViewController {
 extension VideoTrimmerViewController: TrimmerViewDelegate {
   func positionBarStoppedDrag(_ playerTime: CMTime) {
     let duration = (trimmerView.endTime! - trimmerView.startTime!).seconds
-    trimmerView.selectedDuration = duration
-    trimmerView.regenerateThumbnails()
-    trimmerView.resetHandleViewPosition()
-    trimmerView.scrollToTime(playerTime.seconds)
+//    trimmerView.selectedDuration = duration
+//    trimmerView.regenerateThumbnails()
+//    trimmerView.resetHandleViewPosition()
+//    trimmerView.scrollToTime(playerTime.seconds)
     print("positionBarStoppedMoving: second \(playerTime.seconds) - \(duration)")
   }
   
@@ -147,6 +155,7 @@ extension VideoTrimmerViewController: TrimmerViewDelegate {
     player?.pause()
     player?.seek(to: playerTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
     let duration = (trimmerView.endTime! - trimmerView.startTime!).seconds
-    print("didChangePositionBar: second \(playerTime.seconds) - \(duration)")
+    print("endTime: \(trimmerView.endTime!.seconds) startTime: \(trimmerView.startTime!.seconds)")
+    print(duration)
   }
 }
